@@ -3,12 +3,17 @@ const app = express()
 const teams = require('./teams.json')
 const bodyParser = require('body-parser')
 // const models = require('./models')
+app.use(express.static('client'))
 
-app.get('/teams', (request, response) => {
+app.get('/', (request, response) => {
+    response.send('./client/index.html')
+})
+
+app.get('/api/teams', (request, response) => {
     response.send(teams)
 })
 
-app.get('/teams/:x', (request, response) => {
+app.get('/api/teams/:x', (request, response) => {
     const result = teams.filter(team => request.params.x == team.id || request.params.x == team.abbreviation);
 
     if (result.length) {
@@ -36,7 +41,7 @@ app.get('/teams/:x', (request, response) => {
 
 app.use(bodyParser.json())
 
-app.post('/teams', bodyParser.json(), (request, response) => {
+app.post('/api/teams', bodyParser.json(), (request, response) => {
     const {id, location, mascot, abbreviation, conference, division} = request.body
 console.log(request.body)
     if (!id || !location || !mascot || !abbreviation || !conference || !division) {
