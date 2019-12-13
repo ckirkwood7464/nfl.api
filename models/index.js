@@ -1,16 +1,19 @@
 const Sequelize = require('sequelize')
 const allConfigs = require('../config/sequelize')
-const TeamsModel = require('./teams')
+const teamsModel = require('./teams')
 
 const config = allConfigs['development']
 
 const connection = new Sequelize(config.database, config.username, config.password, {
     host: config.host,
-    dialect: config.dialect
+    dialect: config.dialect,
+    port: config.port,
+    define: {
+        timestamps: false
+    }
 })
 
-const Teams = TeamsModel(connection, Sequelize)
+const Teams = teamsModel(connection, Sequelize)
 
-Teams.belongsTo(Teams)
 
 module.exports = {Teams}

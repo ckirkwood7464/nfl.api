@@ -1,24 +1,24 @@
 const express = require('express')
-const app = express()
 //const teams = require('./teams.json')
 const bodyParser = require('body-parser')
 const models = require('./models')
 //app.use(express.static('client'))
 
-app.get('/', (request, response) => {
-    response.send('./client/index.html')
-})
+const app = express()
 
-app.get('/api/teams', (request, response) => {
-    models.teams.findAll({ include: { model: models.teams}}).then((teams) => {
+// app.get('/', (request, response) => {
+//     response.send('./client/index.html')
+// })
+
+app.get('/teams', (request, response) => {
+    models.Teams.findAll().then((teams) => {
     response.send(teams)
     })
 })
 
-app.get('/api/teams/:x', (request, response) => {
-    models.teams.findOne({
-        where: { x: request.params.x },
-        include: { model: models.teams }
+app.get('/teams/:id', (request, response) => {
+    models.Teams.findOne({
+        where: { id: request.params.id }
     }).then((team) => {
         if (team) {
             response.send(team)
@@ -52,17 +52,17 @@ app.get('/api/teams/:x', (request, response) => {
 
 app.use(bodyParser.json())
 
-app.post('/api/teams', bodyParser.json(), (request, response) => {
+app.post('/teams', bodyParser.json(), (request, response) => {
     const {id, location, mascot, abbreviation, conference, division} = request.body
-console.log(request.body)
+
     if (!id || !location || !mascot || !abbreviation || !conference || !division) {
         response.status(400).send('Test')
     }
-    models.teams.findOne( { where: {id: location }}).then((team) => {
+    models.Teams.findAll().then((team) => {
         if (!team) {
             response.sendStatus(404).send('Unknown Team Slug')
         } else {
-            models.teams.create({id, location, mascot, abbreviation, conference, division}).then((newTeam) => {
+            models.Teams.create({id, location, mascot, abbreviation, conference, division}).then((newTeam) => {
                 response.status(201).send(newTeam)
             })
         }
